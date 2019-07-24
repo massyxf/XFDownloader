@@ -105,13 +105,20 @@ static XFDownloadManager *_manager = nil;
 -(XFDownloadRequest *)createRequestWithUrl:(NSString *)url progress:(void (^)(float))progressBlock success:(void (^)(void))success fail:(void (^)(NSError *))fail{
     __weak typeof(self) weakManager = self;
     return [[XFDownloadRequest alloc] initWithUrl:url progress:^(float progress) {
-        progressBlock(progress);
+        if(progressBlock){
+            progressBlock(progress);
+        }
     } success:^{
         [weakManager completeWithUrl:url];
-        success();
+        if (success) {
+            success();
+        }
+        
     } fail:^(NSError *error) {
         [weakManager completeWithUrl:url];
-        fail(error);
+        if (fail) {
+            fail(error);
+        }
     }];
 }
 
